@@ -1,0 +1,1078 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neon Tic Tac Toe</title>
+<link rel="icon" type="image/png" href="icon.png">
+<style><link rel="manifest" href="manifest.json">
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --gold: #ffd166;
+    --purple: #a855f7;
+    --blue: #38bdf8;
+    --panel: rgba(20, 25, 55, 0.78);
+}
+
+body {
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    color: white;
+    background:
+        radial-gradient(ellipse at 15% 15%, rgba(120, 40, 220, .35), transparent 40%),
+        radial-gradient(ellipse at 85% 80%, rgba(0, 150, 255, .28), transparent 42%),
+        linear-gradient(135deg, #080b20, #171039, #081b35);
+    background-attachment: fixed;
+    overflow-x: hidden;
+    padding: 20px 12px 40px;
+}
+
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: .35;
+    pointer-events: none;
+    z-index: -1;
+    animation: float 9s ease-in-out infinite alternate;
+}
+
+body::before {
+    background: #9333ea;
+    top: 5%;
+    left: -100px;
+}
+
+body::after {
+    background: #0284c7;
+    right: -100px;
+    bottom: 5%;
+    animation-delay: -4s;
+}
+
+@keyframes float {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(70px, 50px) scale(1.25); }
+}
+
+.particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 12px #8b5cf6;
+    animation: sparkle linear infinite;
+}
+
+@keyframes sparkle {
+    from { transform: translateY(110vh); opacity: 0; }
+    15% { opacity: .8; }
+    85% { opacity: .7; }
+    to { transform: translateY(-10vh); opacity: 0; }
+}
+
+.container {
+    max-width: 520px;
+    margin: auto;
+    position: relative;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 22px;
+}
+
+.logo {
+    font-size: 42px;
+    margin-bottom: 7px;
+    filter: drop-shadow(0 0 15px #a855f7);
+}
+
+h1 {
+    font-size: clamp(27px, 7vw, 36px);
+    font-weight: 900;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #fff, #c084fc, #67e8f9);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 25px rgba(168, 85, 247, .2);
+}
+
+.subtitle {
+    color: #b8b8dc;
+    font-size: 13px;
+    margin-top: 7px;
+    letter-spacing: 2px;
+}
+
+.panel {
+    background: var(--panel);
+    border: 1px solid rgba(180, 150, 255, .25);
+    border-radius: 22px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .3),
+                inset 0 1px 0 rgba(255,255,255,.06);
+    backdrop-filter: blur(14px);
+}
+
+h2 {
+    font-size: 19px;
+    text-align: center;
+    margin-bottom: 16px;
+    color: var(--gold);
+}
+
+button {
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 13px;
+    padding: 13px 16px;
+    transition: .2s;
+    color: white;
+}
+
+button:active {
+    transform: scale(.96);
+}
+
+button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.primary {
+    background: linear-gradient(110deg, #9333ea, #4f46e5);
+    box-shadow: 0 5px 18px rgba(147, 51, 234, .3);
+}
+
+.secondary {
+    background: linear-gradient(110deg, #0369a1, #2563eb);
+    box-shadow: 0 5px 18px rgba(37, 99, 235, .25);
+}
+
+.gold-btn {
+    color: #261b09;
+    background: linear-gradient(110deg, #ffe08a, #f59e0b);
+}
+
+.gray-btn {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.12);
+}
+
+.full {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.mode-buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.mode-buttons button {
+    padding: 17px;
+    font-size: 15px;
+}
+
+.info {
+    text-align: center;
+    color: #c7c9e8;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-top: 14px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.status {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    margin: 8px 0 17px;
+    min-height: 24px;
+    text-shadow: 0 0 12px #a855f7;
+}
+
+.round-label {
+    text-align: center;
+    color: var(--gold);
+    font-weight: bold;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.scoreboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 17px;
+}
+
+.score {
+    text-align: center;
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.09);
+}
+
+.score span {
+    display: block;
+    font-size: 12px;
+    color: #c4c6e6;
+    margin-bottom: 5px;
+}
+
+.score strong {
+    font-size: 25px;
+    color: var(--gold);
+}
+
+.board {
+    width: min(100%, 340px);
+    margin: 0 auto 18px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.cell {
+    aspect-ratio: 1;
+    border-radius: 17px;
+    border: 1px solid rgba(167, 139, 250, .35);
+    background: linear-gradient(145deg, rgba(58, 44, 100, .75), rgba(12, 35, 70, .8));
+    box-shadow: inset 0 0 18px rgba(255,255,255,.025),
+                0 5px 16px rgba(0,0,0,.2);
+    font-size: clamp(45px, 13vw, 65px);
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
+.cell:disabled {
+    opacity: 1;
+}
+
+.cell.x {
+    color: #38bdf8;
+    text-shadow: 0 0 12px #0ea5e9, 0 0 30px #0284c7;
+}
+
+.cell.o {
+    color: #e879f9;
+    text-shadow: 0 0 12px #d946ef, 0 0 30px #a21caf;
+}
+
+.neon-symbols .cell.x {
+    color: #67ffbb;
+    text-shadow: 0 0 10px #00ff99, 0 0 30px #00ff99;
+}
+
+.neon-symbols .cell.o {
+    color: #ff83d5;
+    text-shadow: 0 0 10px #ff00a8, 0 0 30px #ff00a8;
+}
+
+.purple-board .cell {
+    background: linear-gradient(145deg, #512a8c, #241047);
+    border-color: #c084fc;
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.controls button {
+    font-size: 12px;
+    padding: 12px 7px;
+}
+
+.sound-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    color: #ddd;
+    font-size: 14px;
+}
+
+.toggle {
+    background: #334155;
+    padding: 9px 13px;
+    font-size: 12px;
+}
+
+.toggle.active {
+    background: #15803d;
+}
+
+.reward-summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.reward-item {
+    padding: 14px 8px;
+    text-align: center;
+    background: rgba(255,255,255,.06);
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.08);
+}
+
+.reward-item .emoji {
+    font-size: 24px;
+}
+
+.reward-item strong {
+    display: block;
+    font-size: 21px;
+    color: var(--gold);
+    margin: 5px 0;
+}
+
+.reward-item small {
+    color: #c5c5dc;
+}
+
+.level {
+    text-align: center;
+    padding: 12px;
+    border-radius: 13px;
+    margin-top: 12px;
+    background: rgba(255,209,102,.1);
+    color: var(--gold);
+    font-weight: bold;
+}
+
+.shop-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 14px;
+    margin-bottom: 10px;
+}
+
+.shop-icon {
+    font-size: 29px;
+}
+
+.shop-details {
+    flex: 1;
+}
+
+.shop-details strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.shop-details small {
+    color: #bcbdd8;
+    font-size: 11px;
+}
+
+.shop-item button {
+    font-size: 11px;
+    padding: 10px;
+}
+
+.result {
+    text-align: center;
+    font-size: 18px;
+    color: var(--gold);
+    font-weight: bold;
+    margin: 12px 0;
+    line-height: 1.6;
+}
+
+.note {
+    text-align: center;
+    color: #aeb4d2;
+    font-size: 11px;
+    margin-top: 12px;
+    line-height: 1.5;
+}
+
+footer {
+    text-align: center;
+    color: #777d9f;
+    font-size: 11px;
+    margin-top: 22px;
+}
+</style>
+</head>
+
+<body>
+<div class="particles" id="particles"></div>
+
+<div class="container">
+
+<header>
+    <div class="logo">✦</div>
+    <h1>NEON TIC TAC TOE</h1>
+    <p class="subtitle">THINK • PLAY • WIN</p>
+</header>
+
+<!-- HOME -->
+<section id="home" class="panel">
+    <h2>🎮 Choose Your Game Mode</h2>
+
+    <div class="mode-buttons">
+        <button class="primary" onclick="startGame('computer')">
+            🤖 ONE PLAYER<br>
+            <small>Play against Computer</small>
+        </button>
+
+        <button class="secondary" onclick="startGame('two')">
+            👥 TWO PLAYERS<br>
+            <small>Play with a Friend</small>
+        </button>
+    </div>
+
+    <p class="info">
+        Win rounds to earn stars and points.<br>
+        Complete three rounds in each match!
+    </p>
+</section>
+
+<!-- GAME -->
+<section id="game" class="panel hidden">
+
+    <div class="round-label" id="roundLabel">ROUND 1 OF 3</div>
+
+    <div class="scoreboard">
+        <div class="score">
+            <span id="labelX">YOU (X)</span>
+            <strong id="scoreX">0</strong>
+        </div>
+        <div class="score">
+            <span id="labelO">COMPUTER (O)</span>
+            <strong id="scoreO">0</strong>
+        </div>
+    </div>
+
+    <div class="status" id="status">Player X's turn</div>
+
+    <div class="board" id="board">
+        <button class="cell" onclick="playMove(0)"></button>
+        <button class="cell" onclick="playMove(1)"></button>
+        <button class="cell" onclick="playMove(2)"></button>
+        <button class="cell" onclick="playMove(3)"></button>
+        <button class="cell" onclick="playMove(4)"></button>
+        <button class="cell" onclick="playMove(5)"></button>
+        <button class="cell" onclick="playMove(6)"></button>
+        <button class="cell" onclick="playMove(7)"></button>
+        <button class="cell" onclick="playMove(8)"></button>
+    </div>
+
+    <div class="controls">
+        <button class="secondary" onclick="restartRound()">↻ Restart Round</button>
+        <button class="gray-btn" onclick="backHome()">⌂ Back to Home</button>
+    </div>
+</section>
+
+<!-- MATCH RESULT -->
+<section id="matchResult" class="panel hidden">
+    <h2>🏆 MATCH COMPLETE</h2>
+    <div class="result" id="finalResult"></div>
+    <p class="info" id="finalScore"></p>
+    <button class="gold-btn full" onclick="startGame(gameMode)">Play Again</button>
+    <button class="gray-btn full" onclick="backHome()">Back to Home</button>
+</section>
+
+<!-- SOUND -->
+<section class="panel">
+    <div class="sound-row">
+        <span>🔊 Game Sounds</span>
+        <button class="toggle active" id="soundButton" onclick="toggleSound()">SOUND ON</button>
+    </div>
+</section>
+
+<!-- REWARDS -->
+<section class="panel">
+    <h2>🎁 Your Rewards</h2>
+
+    <div class="reward-summary">
+        <div class="reward-item">
+            <div class="emoji">⭐</div>
+            <strong id="stars">0</strong>
+            <small>Stars</small>
+        </div>
+        <div class="reward-item">
+            <div class="emoji">💎</div>
+            <strong id="points">0</strong>
+            <small>Points</small>
+        </div>
+    </div>
+
+    <div class="level" id="level">🥉 Bronze Level</div>
+    <p class="note">A round win earns 3 stars and 30 points.</p>
+</section>
+
+<!-- SHOP -->
+<section class="panel">
+    <h2>🛍️ Reward Shop</h2>
+
+    <div class="shop-item">
+        <div class="shop-icon">🌈</div>
+        <div class="shop-details">
+            <strong>Neon X/O Symbols</strong>
+            <small>Unlock with 30 stars</small>
+        </div>
+        <button class="gold-btn" id="neonButton" onclick="buyNeon()">UNLOCK</button>
+    </div>
+
+    <div class="shop-item">
+        <div class="shop-icon">💜</div>
+        <div class="shop-details">
+            <strong>Purple Board Theme</strong>
+            <small>Unlock with 100 points</small>
+        </div>
+        <button class="gold-btn" id="purpleButton" onclick="buyPurple()">UNLOCK</button>
+    </div>
+
+    <p class="note">Your rewards and purchases are saved on this device.</p>
+</section>
+
+<footer>NEON TIC TAC TOE • HAVE FUN!</footer>
+
+</div>
+
+<script>
+// ---------------- PARTICLES ----------------
+
+const particleBox = document.getElementById("particles");
+
+for (let i = 0; i < 35; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.style.left = Math.random() * 100 + "%";
+    p.style.animationDuration = (5 + Math.random() * 10) + "s";
+    p.style.animationDelay = (-Math.random() * 12) + "s";
+    p.style.opacity = Math.random();
+    particleBox.appendChild(p);
+}
+
+// ---------------- SAVED REWARDS ----------------
+
+let saved = {};
+
+try {
+    saved = JSON.parse(localStorage.getItem("neonTicTacToeRewards")) || {};
+} catch (e) {
+    saved = {};
+}
+
+let stars = Number(saved.stars) || 0;
+let points = Number(saved.points) || 0;
+let neonUnlocked = !!saved.neonUnlocked;
+let purpleUnlocked = !!saved.purpleUnlocked;
+let neonSelected = !!saved.neonSelected;
+let purpleSelected = !!saved.purpleSelected;
+
+function saveRewards() {
+    localStorage.setItem("neonTicTacToeRewards", JSON.stringify({
+        stars,
+        points,
+        neonUnlocked,
+        purpleUnlocked,
+        neonSelected,
+        purpleSelected
+    }));
+    updateRewards();
+}
+
+function updateRewards() {
+    document.getElementById("stars").textContent = stars;
+    document.getElementById("points").textContent = points;
+
+    let level = "🥉 Bronze Level";
+
+    if (stars >= 180) level = "💎 Diamond Level";
+    else if (stars >= 90) level = "🥇 Gold Level";
+    else if (stars >= 30) level = "🥈 Silver Level";
+
+    document.getElementById("level").textContent = level;
+
+    const neonBtn = document.getElementById("neonButton");
+    const purpleBtn = document.getElementById("purpleButton");
+
+    neonBtn.textContent = !neonUnlocked ? "UNLOCK" :
+        neonSelected ? "SELECTED" : "USE";
+
+    purpleBtn.textContent = !purpleUnlocked ? "UNLOCK" :
+        purpleSelected ? "SELECTED" : "USE";
+
+    neonBtn.disabled = !neonUnlocked && stars < 30;
+    purpleBtn.disabled = !purpleUnlocked && points < 100;
+
+    applyAppearance();
+}
+
+function buyNeon() {
+    if (!neonUnlocked) {
+        if (stars < 30) return;
+        stars -= 30;
+        neonUnlocked = true;
+        neonSelected = true;
+    } else {
+        neonSelected = !neonSelected;
+    }
+
+    saveRewards();
+    playClick();
+}
+
+function buyPurple() {
+    if (!purpleUnlocked) {
+        if (points < 100) return;
+        points -= 100;
+        purpleUnlocked = true;
+        purpleSelected = true;
+    } else {
+        purpleSelected = !purpleSelected;
+    }
+
+    saveRewards();
+    playClick();
+}
+
+function applyAppearance() {
+    const board = document.getElementById("board");
+
+    board.classList.toggle("neon-symbols", neonSelected);
+    board.classList.toggle("purple-board", purpleSelected);
+
+    renderBoard();
+}
+
+// ---------------- SOUND ----------------
+
+let soundOn = true;
+let audioContext = null;
+
+function audio() {
+    if (!soundOn) return null;
+
+    try {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        if (audioContext.state === "suspended") {
+            audioContext.resume();
+        }
+
+        return audioContext;
+    } catch (e) {
+        return null;
+    }
+}
+
+function tone(frequency, duration, type = "sine", volume = 0.08, delay = 0) {
+    const ctx = audio();
+    if (!ctx) return;
+
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency, ctx.currentTime + delay);
+
+    gain.gain.setValueAtTime(volume, ctx.currentTime + delay);
+    gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        ctx.currentTime + delay + duration
+    );
+
+    oscillator.connect(gain);
+    gain.connect(ctx.destination);
+
+    oscillator.start(ctx.currentTime + delay);
+    oscillator.stop(ctx.currentTime + delay + duration);
+}
+
+function playClick() {
+    tone(600, .07, "triangle", .035);
+}
+
+function playMove() {
+    tone(180, .08, "sawtooth", .045);
+    tone(110, .06, "square", .025, .035);
+}
+
+function playWin() {
+    [523, 659, 784, 1046].forEach((n, i) => {
+        tone(n, .22, "sine", .09, i * .13);
+    });
+}
+
+function playDraw() {
+    tone(440, .2, "triangle", .07);
+    tone(349, .25, "triangle", .07, .18);
+}
+
+function toggleSound() {
+    soundOn = !soundOn;
+
+    const button = document.getElementById("soundButton");
+    button.textContent = soundOn ? "SOUND ON" : "SOUND OFF";
+    button.classList.toggle("active", soundOn);
+
+    if (soundOn) playClick();
+}
+
+// ---------------- GAME STATE ----------------
+
+let gameMode = "computer";
+let board = Array(9).fill("");
+let currentPlayer = "X";
+let round = 1;
+let scoreX = 0;
+let scoreO = 0;
+let roundActive = false;
+let matchFinished = false;
+let computerTimer = null;
+let roundTimer = null;
+
+const cells = document.querySelectorAll(".cell");
+
+const winningLines = [
+    [0,1,2], [3,4,5], [6,7,8],
+    [0,3,6], [1,4,7], [2,5,8],
+    [0,4,8], [2,4,6]
+];
+
+function startGame(mode) {
+    clearTimeout(computerTimer);
+    clearTimeout(roundTimer);
+
+    gameMode = mode;
+    round = 1;
+    scoreX = 0;
+    scoreO = 0;
+    matchFinished = false;
+
+    document.getElementById("home").classList.add("hidden");
+    document.getElementById("matchResult").classList.add("hidden");
+    document.getElementById("game").classList.remove("hidden");
+
+    document.getElementById("labelX").textContent =
+        mode === "computer" ? "YOU (X)" : "PLAYER X";
+
+    document.getElementById("labelO").textContent =
+        mode === "computer" ? "COMPUTER (O)" : "PLAYER O";
+
+    updateScore();
+    newRound();
+    playClick();
+}
+
+function newRound() {
+    board = Array(9).fill("");
+    currentPlayer = "X";
+    roundActive = true;
+
+    document.getElementById("roundLabel").textContent =
+        "ROUND " + round + " OF 3";
+
+    document.getElementById("status").textContent =
+        gameMode === "computer" ? "Your turn (X)" : "Player X's turn";
+
+    renderBoard();
+}
+
+function updateScore() {
+    document.getElementById("scoreX").textContent = scoreX;
+    document.getElementById("scoreO").textContent = scoreO;
+}
+
+function renderBoard() {
+    cells.forEach((cell, i) => {
+        const value = board[i];
+
+        if (!value) {
+            cell.textContent = "";
+        } else if (neonSelected) {
+            cell.textContent = value === "X" ? "✕" : "◯";
+        } else {
+            cell.textContent = value;
+        }
+
+        cell.classList.toggle("x", value === "X");
+        cell.classList.toggle("o", value === "O");
+
+        cell.disabled = !roundActive || !!value;
+    });
+}
+
+// ---------------- PLAYER MOVE ----------------
+
+function playMove(index) {
+    if (!roundActive || board[index] !== "") return;
+
+    if (gameMode === "computer" && currentPlayer !== "X") return;
+
+    makeMove(index, currentPlayer);
+
+    if (!roundActive) return;
+
+    if (gameMode === "computer" && currentPlayer === "O") {
+        document.getElementById("status").textContent = "Computer is thinking...";
+
+        computerTimer = setTimeout(() => {
+            if (!roundActive) return;
+            const move = findBestMove();
+            if (move !== -1) makeMove(move, "O");
+        }, 450);
+    }
+}
+
+function makeMove(index, player) {
+    if (!roundActive || board[index] !== "") return;
+
+    board[index] = player;
+    playMoveSoundSafe();
+    renderBoard();
+
+    const winner = getWinner();
+
+    if (winner) {
+        endRound(winner);
+        return;
+    }
+
+    if (board.every(cell => cell !== "")) {
+        endRound("draw");
+        return;
+    }
+
+    currentPlayer = player === "X" ? "O" : "X";
+
+    if (gameMode === "computer") {
+        document.getElementById("status").textContent =
+            currentPlayer === "X" ? "Your turn (X)" : "Computer's turn";
+    } else {
+        document.getElementById("status").textContent =
+            "Player " + currentPlayer + "'s turn";
+    }
+
+    renderBoard();
+}
+
+function playMoveSoundSafe() {
+    playMove();
+}
+
+// ---------------- WIN CHECK ----------------
+
+function getWinner() {
+    for (const line of winningLines) {
+        const [a, b, c] = line;
+
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+            return board[a];
+        }
+    }
+
+    return null;
+}
+
+// ---------------- COMPUTER AI ----------------
+
+function findBestMove() {
+    // Try to win.
+    for (let i = 0; i < 9; i++) {
+        if (board[i] === "") {
+            board[i] = "O";
+            const win = getWinner();
+            board[i] = "";
+
+            if (win === "O") return i;
+        }
+    }
+
+    // Block the player.
+    for (let i = 0; i < 9; i++) {
+        if (board[i] === "") {
+            board[i] = "X";
+            const win = getWinner();
+            board[i] = "";
+
+            if (win === "X") return i;
+        }
+    }
+
+    // Take center.
+    if (board[4] === "") return 4;
+
+    // Take a corner.
+    const corners = [0, 2, 6, 8].filter(i => board[i] === "");
+
+    if (corners.length) {
+        return corners[Math.floor(Math.random() * corners.length)];
+    }
+
+    // Take any available square.
+    const available = board
+        .map((v, i) => v === "" ? i : -1)
+        .filter(i => i !== -1);
+
+    if (available.length) {
+        return available[Math.floor(Math.random() * available.length)];
+    }
+
+    return -1;
+}
+
+// ---------------- ROUND RESULTS ----------------
+
+function endRound(result) {
+    if (!roundActive) return;
+
+    roundActive = false;
+    renderBoard();
+
+    if (result === "X") {
+        scoreX++;
+        if (gameMode === "computer") {
+            stars += 3;
+            points += 30;
+            saveRewards();
+            document.getElementById("status").textContent = "🎉 You won! +3 stars, +30 points";
+        } else {
+            stars += 3;
+            points += 30;
+            saveRewards();
+            document.getElementById("status").textContent = "🏆 Player X wins! +3 stars, +30 points";
+        }
+
+        playWin();
+    } else if (result === "O") {
+        scoreO++;
+
+        if (gameMode === "two") {
+            stars += 3;
+            points += 30;
+            saveRewards();
+            document.getElementById("status").textContent = "🏆 Player O wins! +3 stars, +30 points";
+        } else {
+            document.getElementById("status").textContent = "🤖 Computer wins this round!";
+        }
+
+        playWin();
+    } else {
+        document.getElementById("status").textContent = "🤝 It's a draw!";
+        playDraw();
+    }
+
+    updateScore();
+
+    roundTimer = setTimeout(() => {
+        if (round < 3) {
+            round++;
+            newRound();
+        } else {
+            finishMatch();
+        }
+    }, 2500);
+}
+
+function finishMatch() {
+    matchFinished = true;
+
+    document.getElementById("game").classList.add("hidden");
+    document.getElementById("matchResult").classList.remove("hidden");
+
+    let resultText = "";
+
+    if (scoreX > scoreO) {
+        resultText = gameMode === "computer" ?
+            "🏆 YOU WON THE MATCH!" : "🏆 PLAYER X WON!";
+    } else if (scoreO > scoreX) {
+        resultText = gameMode === "computer" ?
+            "🤖 COMPUTER WON THE MATCH!" : "🏆 PLAYER O WON!";
+    } else {
+        resultText = "🤝 THE MATCH IS TIED!";
+    }
+
+    document.getElementById("finalResult").textContent = resultText;
+
+    document.getElementById("finalScore").textContent =
+        (gameMode === "computer" ? "You: " : "Player X: ") +
+        scoreX + "  |  " +
+        (gameMode === "computer" ? "Computer: " : "Player O: ") +
+        scoreO;
+}
+
+// ---------------- GAME CONTROLS ----------------
+
+function restartRound() {
+    clearTimeout(computerTimer);
+    clearTimeout(roundTimer);
+
+    if (matchFinished) return;
+
+    newRound();
+    playClick();
+}
+
+function backHome() {
+    clearTimeout(computerTimer);
+    clearTimeout(roundTimer);
+
+    roundActive = false;
+    matchFinished = false;
+
+    document.getElementById("game").classList.add("hidden");
+    document.getElementById("matchResult").classList.add("hidden");
+    document.getElementById("home").classList.remove("hidden");
+
+    playClick();
+}
+
+// ---------------- INITIALIZE ----------------
+
+updateRewards();
+renderBoard();
+</script>
+</body>
+</html>
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
